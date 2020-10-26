@@ -37,17 +37,16 @@ export default function StackedAreaChart(container){
         .scaleLinear()
         .range([height,0])
 
-    //=== Create & Initialize Axes ===
     var xAxis = d3.axisBottom()
         .scale(xScale);
 
     var yAxis = d3.axisLeft()
         .scale(yScale);
 
-    svg.append("g")
+    var xAxisGroup = svg.append("g")
         .attr('class', 'axis x-axis')
 
-    svg.append('g')
+    var yAxisGroup = svg.append('g')
         .attr('class', 'axis y-axis');
     function updateMain(selected, data, svg){
 
@@ -56,6 +55,7 @@ export default function StackedAreaChart(container){
 
             console.log(data, "MAIN")
             svg.exit().remove()
+            svg.select('axis y-axis').exit().remove()
 
                     // initialization
             let margin = { top: 40, right: 20, bottom: 40, left: 90 },
@@ -68,20 +68,7 @@ export default function StackedAreaChart(container){
             var type = ""
             let selection;
 
-            // svg = d3
-            // .select(container)
-            // .append("svg")
-            // .attr("width", width + margin.left + margin.right)
-            // .attr("height", height + margin.top + margin.bottom)
-            // .append("g")
-            // .attr("transform", `translate(${margin.left},${margin.top})`);
-            svg.append("path")
-            .attr("fill", d=>colorScale(selected))
-            .attr("class", "area3")
-            .attr("clip-path", "url(#clip)")
-            .on("click", (event, d) => {
-                update(data)
-            })
+            
 
         let xScale = d3
             .scaleTime()
@@ -94,44 +81,56 @@ export default function StackedAreaChart(container){
         
 
         //=== Create & Initialize Axes ===
-        var xAxis = d3.axisBottom()
+        let xAxis = d3.axisBottom()
             .scale(xScale);
 
-        var yAxis = d3.axisLeft()
+        let yAxis = d3.axisLeft()
             .scale(yScale);
 
-        let xAxisGroup = svg.append("g")
-            .attr('class', 'axis x-axis');
-
-        let yAxisGroup = svg.append('g')
-            .attr('class', 'axis y-axis');
-            
         xScale
             .domain(xDomain? xDomain: d3.extent(data, d=>d.date));
         yScale
             .domain([0, d3.max(data, d=>d[selected])]);
 
+            svg.append("path")
+            .attr("fill", d=>colorScale(selected))
+            .attr("class", "area3")
+            .attr("clip-path", "url(#clip)")
+            .on("click", (event, d) => {
+                update(data)
+            })
+
         var area3 = d3.area()
             .x(function(d) { return xScale(d.date); })
             .y0(function() { return yScale(0); })
             .y1(function(d) { return yScale(d[selected]); });
-        
-        
 
-        svg.select('.x-axis')
-            .call(xAxis)
-            .attr("transform", `translate(0, ${height})`);
-        
-        svg.select('.y-axis')
-            .call(yAxis)
-
-            d3.select(".area3")
+        d3.select(".area3")
             .datum(data)
             .attr("d",area3)
-        }
+
+            // area3.exit().remove()
+
+        //     let xAxisGroup = svg.append("g")
+        //     .attr('class', 'axis x-axis');
+
+        // let yAxisGroup = svg.append('g')
+        //     .attr('class', 'axis y-axis');
+
+            xAxisGroup
+            .call(xAxis)
+            // .attr("transform", `translate(0, ${height})`);
+
+            yAxisGroup
+            .call(yAxis)
+         }
+
     //====Update function====
     function update(_data){ 
-        svg.selectAll('.area3').remove()
+        svg.selectAll('.area3').exit().remove()
+        svg.select('axis y-axis').exit().remove()
+
+
         selected = null
         console.log("UUPDATE", data)
         data = _data;
@@ -165,14 +164,7 @@ export default function StackedAreaChart(container){
         //     .datum(data)
         //     .attr("d",area2)
 
-        function drawAxes(){
-                svg.select('.x-axis')
-                    .call(xAxis)
-                    .attr("transform", `translate(0, ${height})`);
-                svg.select('.y-axis')
-                    .call(yAxis)
-        
-            }
+     
             
         // xScale.domain(d3.extent(data, d=>d.date))
         // yScale.domain([0, d3.max(series, d => d3.max(d, d => d[1]))])
@@ -185,78 +177,6 @@ export default function StackedAreaChart(container){
             .y0(d=>yScale(d[0]))
             .y1(d=>yScale(d[1]))
 
-        // function updateMain(selected, data, svg){
-        //     console.log(data, "MAIN")
-        //     svg.exit().remove()
-
-        //             // initialization
-        //     let margin = { top: 40, right: 20, bottom: 40, left: 90 },
-        //     width =
-        //     710 -
-        //     margin.left -
-        //     margin.right,
-        //     height = 400 - margin.top - margin.bottom; 
-
-        //     var type = ""
-        //     let selection;
-
-        //     // svg = d3
-        //     // .select(container)
-        //     // .append("svg")
-        //     // .attr("width", width + margin.left + margin.right)
-        //     // .attr("height", height + margin.top + margin.bottom)
-        //     // .append("g")
-        //     // .attr("transform", `translate(${margin.left},${margin.top})`);
-
-        // let xScale = d3
-        //     .scaleTime()
-        //     .range([0,width])
-
-        // let yScale = d3
-        //     .scaleLinear()
-        //     .range([height,0])
-
-        // svg.append("path")
-        // .attr("fill", d=>colorScale(data[selected]))
-        // .attr("class", "area3")
-        // .on("click", (event, d) => {
-        //     update(data)
-        // })
-
-        // //=== Create & Initialize Axes ===
-        // var xAxis = d3.axisBottom()
-        //     .scale(xScale);
-
-        // var yAxis = d3.axisLeft()
-        //     .scale(yScale);
-
-        // let xAxisGroup = svg.append("g")
-        //     .attr('class', 'axis x-axis');
-
-        // let yAxisGroup = svg.append('g')
-        //     .attr('class', 'axis y-axis');
-            
-        //     xScale
-        //   .domain(d3.extent(data, d=>d.date));
-        // yScale
-        //     .domain([0, d3.max(data, d=>d[selected])]);
-
-        // var area3 = d3.area()
-        //     .x(function(d) { return xScale(d.date); })
-        //     .y0(function() { return yScale(0); })
-        //     .y1(function(d) { return yScale(d[selected]); });
-        
-        // d3.select(".area3")
-        //     .datum(data)
-        //     .attr("d",area3)
-
-        //     svg.select('.x-axis')
-        //     .call(xAxis)
-        //     .attr("transform", `translate(0, ${height})`);
-        
-        // svg.select('.y-axis')
-        //     .call(yAxis)
-        // }
             
 
         svg.selectAll("path")
@@ -274,7 +194,11 @@ export default function StackedAreaChart(container){
                     updateMain(selected, data, svg)
                     //update(data); // simply update the chart again
             })
-        drawAxes();
+        svg.select('.x-axis')
+                    .call(xAxis)
+                    .attr("transform", `translate(0, ${height})`);
+                svg.select('.y-axis')
+                    .call(yAxis)
     }
     function filterByDate(range){
         xDomain = range;  // -- (3)
