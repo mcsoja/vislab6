@@ -9,6 +9,7 @@ export default function AreaChart(container){
      height = 150 - margin.top - margin.bottom; 
 
      var type = ""
+     let selection;
 
      let svg = d3
      .select(container)
@@ -73,21 +74,21 @@ export default function AreaChart(container){
 }
 
 const listeners = { brushed: null };
-
+    
 const brush = d3
-   .brushX()
-   .extent([[0,0],[width,height]])
-   .on('brush', brushed)
-   .on('end', brushed);
+    .brushX()
+    .extent([[0,0],[width,height]])
+    .on('brush', brushed)
+    .on('end', brushed);
 
 svg.append("g").attr('class', 'brush').call(brush);
 
 function brushed(event) {
-      if (event.selection) {
-        console.log("brushed", event.selection);
-        listeners["brushed"](event.selection.map(xScale.invert));
-      }
+    if (event.selection) {
+      console.log("brushed", event.selection);
+      listeners["brushed"](event.selection.map(xScale.invert));
     }
+  }
 
 return {
     update,
