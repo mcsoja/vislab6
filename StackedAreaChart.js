@@ -130,7 +130,6 @@ export default function StackedAreaChart(container){
         svg.selectAll('.area3').exit().remove()
         svg.select('axis y-axis').exit().remove()
 
-
         selected = null
         console.log("UUPDATE", data)
         data = _data;
