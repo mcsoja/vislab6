@@ -132,6 +132,9 @@ export default function StackedAreaChart(container){
         svg.append("path")
         .attr("fill", d=>colorScale(data[selected]))
         .attr("class", "area3")
+        .on("click", (event, d) => {
+            update(data)
+        })
 
         //=== Create & Initialize Axes ===
         var xAxis = d3.axisBottom()
@@ -177,17 +180,10 @@ export default function StackedAreaChart(container){
             .on("mouseover", (event, d, i) => tooltip.text(d.key))
             .on("mouseout", (event, d, i) => tooltip.text(""))
             .on("click", (event, d) => {
-                // toggle selected based on d.key
-                if (selected === d.key) {
-                    console.log("IF")
-                    selected = null;
-                    update(data)
-                } else {
                     console.log("ELSE")
                     selected = d.key;
                     svg.selectAll('path').remove()
                     updateMain(selected, data, svg)
-                }
                     //update(data); // simply update the chart again
             })
         drawAxes();
