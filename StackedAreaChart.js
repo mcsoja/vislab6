@@ -43,9 +43,84 @@ export default function StackedAreaChart(container){
 
     svg.append('g')
         .attr('class', 'axis y-axis');
-    
+    function updateMain(selected, data, svg){
+        var colorScale = d3.scaleOrdinal(d3.schemeTableau10)
+            .domain(data.columns.slice(1));
+            console.log(data, "MAIN")
+            svg.exit().remove()
+
+                    // initialization
+            let margin = { top: 40, right: 20, bottom: 40, left: 90 },
+            width =
+            710 -
+            margin.left -
+            margin.right,
+            height = 400 - margin.top - margin.bottom; 
+
+            var type = ""
+            let selection;
+
+            // svg = d3
+            // .select(container)
+            // .append("svg")
+            // .attr("width", width + margin.left + margin.right)
+            // .attr("height", height + margin.top + margin.bottom)
+            // .append("g")
+            // .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        let xScale = d3
+            .scaleTime()
+            .range([0,width])
+
+        let yScale = d3
+            .scaleLinear()
+            .range([height,0])
+
+        svg.append("path")
+        .attr("fill", d=>colorScale(data[selected]))
+        .attr("class", "area3")
+        .on("click", (event, d) => {
+            update(data)
+        })
+
+        //=== Create & Initialize Axes ===
+        var xAxis = d3.axisBottom()
+            .scale(xScale);
+
+        var yAxis = d3.axisLeft()
+            .scale(yScale);
+
+        let xAxisGroup = svg.append("g")
+            .attr('class', 'axis x-axis');
+
+        let yAxisGroup = svg.append('g')
+            .attr('class', 'axis y-axis');
+            
+        xScale
+            .domain(xDomain? xDomain: d3.extent(data, d=>d.date));
+        yScale
+            .domain([0, d3.max(data, d=>d[selected])]);
+
+        var area3 = d3.area()
+            .x(function(d) { return xScale(d.date); })
+            .y0(function() { return yScale(0); })
+            .y1(function(d) { return yScale(d[selected]); });
+        
+        d3.select(".area3")
+            .datum(data)
+            .attr("d",area3)
+
+            svg.select('.x-axis')
+            .call(xAxis)
+            .attr("transform", `translate(0, ${height})`);
+        
+        svg.select('.y-axis')
+            .call(yAxis)
+        }
     //====Update function====
     function update(_data){ 
+        svg.selectAll('.area3').remove()
+        selected = null
         console.log("UUPDATE", data)
         data = _data;
 
@@ -98,78 +173,78 @@ export default function StackedAreaChart(container){
             .y0(d=>yScale(d[0]))
             .y1(d=>yScale(d[1]))
 
-        function updateMain(selected, data, svg){
-            console.log(data, "MAIN")
-            svg.exit().remove()
+        // function updateMain(selected, data, svg){
+        //     console.log(data, "MAIN")
+        //     svg.exit().remove()
 
-                    // initialization
-            let margin = { top: 40, right: 20, bottom: 40, left: 90 },
-            width =
-            710 -
-            margin.left -
-            margin.right,
-            height = 400 - margin.top - margin.bottom; 
+        //             // initialization
+        //     let margin = { top: 40, right: 20, bottom: 40, left: 90 },
+        //     width =
+        //     710 -
+        //     margin.left -
+        //     margin.right,
+        //     height = 400 - margin.top - margin.bottom; 
 
-            var type = ""
-            let selection;
+        //     var type = ""
+        //     let selection;
 
-            // svg = d3
-            // .select(container)
-            // .append("svg")
-            // .attr("width", width + margin.left + margin.right)
-            // .attr("height", height + margin.top + margin.bottom)
-            // .append("g")
-            // .attr("transform", `translate(${margin.left},${margin.top})`);
+        //     // svg = d3
+        //     // .select(container)
+        //     // .append("svg")
+        //     // .attr("width", width + margin.left + margin.right)
+        //     // .attr("height", height + margin.top + margin.bottom)
+        //     // .append("g")
+        //     // .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        let xScale = d3
-            .scaleTime()
-            .range([0,width])
+        // let xScale = d3
+        //     .scaleTime()
+        //     .range([0,width])
 
-        let yScale = d3
-            .scaleLinear()
-            .range([height,0])
+        // let yScale = d3
+        //     .scaleLinear()
+        //     .range([height,0])
 
-        svg.append("path")
-        .attr("fill", d=>colorScale(data[selected]))
-        .attr("class", "area3")
-        .on("click", (event, d) => {
-            update(data)
-        })
+        // svg.append("path")
+        // .attr("fill", d=>colorScale(data[selected]))
+        // .attr("class", "area3")
+        // .on("click", (event, d) => {
+        //     update(data)
+        // })
 
-        //=== Create & Initialize Axes ===
-        var xAxis = d3.axisBottom()
-            .scale(xScale);
+        // //=== Create & Initialize Axes ===
+        // var xAxis = d3.axisBottom()
+        //     .scale(xScale);
 
-        var yAxis = d3.axisLeft()
-            .scale(yScale);
+        // var yAxis = d3.axisLeft()
+        //     .scale(yScale);
 
-        let xAxisGroup = svg.append("g")
-            .attr('class', 'axis x-axis');
+        // let xAxisGroup = svg.append("g")
+        //     .attr('class', 'axis x-axis');
 
-        let yAxisGroup = svg.append('g')
-            .attr('class', 'axis y-axis');
+        // let yAxisGroup = svg.append('g')
+        //     .attr('class', 'axis y-axis');
             
-            xScale
-          .domain(d3.extent(data, d=>d.date));
-        yScale
-            .domain([0, d3.max(data, d=>d[selected])]);
+        //     xScale
+        //   .domain(d3.extent(data, d=>d.date));
+        // yScale
+        //     .domain([0, d3.max(data, d=>d[selected])]);
 
-        var area3 = d3.area()
-            .x(function(d) { return xScale(d.date); })
-            .y0(function() { return yScale(0); })
-            .y1(function(d) { return yScale(d[selected]); });
+        // var area3 = d3.area()
+        //     .x(function(d) { return xScale(d.date); })
+        //     .y0(function() { return yScale(0); })
+        //     .y1(function(d) { return yScale(d[selected]); });
         
-        d3.select(".area3")
-            .datum(data)
-            .attr("d",area3)
+        // d3.select(".area3")
+        //     .datum(data)
+        //     .attr("d",area3)
 
-            svg.select('.x-axis')
-            .call(xAxis)
-            .attr("transform", `translate(0, ${height})`);
+        //     svg.select('.x-axis')
+        //     .call(xAxis)
+        //     .attr("transform", `translate(0, ${height})`);
         
-        svg.select('.y-axis')
-            .call(yAxis)
-        }
+        // svg.select('.y-axis')
+        //     .call(yAxis)
+        // }
             
 
         svg.selectAll("path")
@@ -188,13 +263,19 @@ export default function StackedAreaChart(container){
             })
         drawAxes();
     }
-
     function filterByDate(range){
         xDomain = range;  // -- (3)
-        update(data); // -- (4)
+        if (selected != null){
+            console.log("HERE")
+            updateMain(selected, data, svg)
+        }
+        if (selected == null) {
+            update(data); // -- (4)
+        }
     }
 
 	return {
+        updateMain,
         update,
         filterByDate
     }
