@@ -57,7 +57,6 @@ export default function StackedAreaChart(container){
             .domain(data.columns.slice(1));
 
             console.log(data, "MAIN")
-            svg.exit().remove()
             svg.select('axis y-axis').exit().remove()
 
                     // initialization
@@ -81,8 +80,6 @@ export default function StackedAreaChart(container){
             .scaleLinear()
             .range([height,0])
 
-        
-
         //=== Create & Initialize Axes ===
         let xAxis = d3.axisBottom()
             .scale(xScale);
@@ -95,32 +92,23 @@ export default function StackedAreaChart(container){
         yScale
             .domain([0, d3.max(data, d=>d[selected])]);
 
-        svg.enter()
-            .append("path")
-            .attr("fill", d=>colorScale(selected))
-            .attr("class", "area3")
-            .attr("clip-path", "url(#clip)")
-            .on("click", (event, d) => {
-                // location.reload()
-                update(data)
-            })
-
-        var area3 = d3.area()
+            var area3 = d3.area()
             .x(function(d) { return xScale(d.date); })
             .y0(function() { return yScale(0); })
             .y1(function(d) { return yScale(d[selected]); });
 
-        d3.select(".area3")
+            svg.append("path")
+            .attr("class", "area3")
+            .attr("fill", d=>colorScale(selected))
+            .attr("clip-path", "url(#clip)")
+            .on("click", (event, d) => {
+                svg.selectAll('.area3').remove()
+                update(data)
+            })
+
+            d3.select(".area3")
             .datum(data)
             .attr("d",area3)
-
-            // area3.exit().remove()
-
-        //     let xAxisGroup = svg.append("g")
-        //     .attr('class', 'axis x-axis');
-
-        // let yAxisGroup = svg.append('g')
-        //     .attr('class', 'axis y-axis');
 
             xAxisGroup
             .call(xAxis)
@@ -203,26 +191,6 @@ export default function StackedAreaChart(container){
             .merge(areas)
             .attr("d", area2)  
  
-            areas.enter().remove()
-
-        // svg.selectAll("path")
-        //     .enter()
-        //     .data(series)
-        //     .join("path")
-        //     .attr("fill", d=>colorScale(d.key))
-        //     .attr("d", area2)  
-        //     .attr("clip-path", "url(#clip)")
-        //     .on("mouseover", (event, d, i) => tooltip.text(d.key))
-        //     .on("mouseout", (event, d, i) => tooltip.text(""))
-        //     .on("click", (event, d) => {
-        //             console.log("ELSE")
-        //             selected = d.key;
-        //             svg.selectAll('path').remove()
-        //             updateMain(selected, DATA, svg)
-        //             //update(data); // simply update the chart again
-        //     })
-        //     .merge(areas)
-        //     .attr("d", area2)
 
             areas.enter().remove()
         
