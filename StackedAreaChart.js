@@ -99,7 +99,7 @@ export default function StackedAreaChart(container){
 
             svg.append("path")
             .attr("class", "area3")
-            .attr("fill", d=>colorScale(selected))
+            .attr("fill", "pink")
             .attr("clip-path", "url(#clip)")
             .on("click", (event, d) => {
                 svg.selectAll('.area3').remove()
