@@ -179,7 +179,7 @@ export default function StackedAreaChart(container){
              .attr('class', 'area2')
             .attr("fill", d=>colorScale(d.key))
             .attr("clip-path", "url(#clip)")
-            .on("mouseover", (event, d, i) => tooltip.text(d.key))
+            .on("mouseover", (event, d, i) => tooltip.text((d.key).replace(/_/g,' ')))
             .on("mouseout", (event, d, i) => tooltip.text(""))
             .on("click", (event, d) => {
                     console.log("ELSE")
