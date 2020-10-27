@@ -185,14 +185,11 @@ export default function StackedAreaChart(container){
         svg.select('.y-axis')
             .call(yAxis)
 
-        
-
-        svg.selectAll("path")
+            areas
             .enter()
-            .data(series)
-            .join("path")
+             .append('path')
+             .attr('class', 'area2')
             .attr("fill", d=>colorScale(d.key))
-            .attr("d", area2)  
             .attr("clip-path", "url(#clip)")
             .on("mouseover", (event, d, i) => tooltip.text(d.key))
             .on("mouseout", (event, d, i) => tooltip.text(""))
@@ -204,7 +201,28 @@ export default function StackedAreaChart(container){
                     //update(data); // simply update the chart again
             })
             .merge(areas)
-            .attr("d", area2)
+            .attr("d", area2)  
+ 
+            areas.enter().remove()
+
+        // svg.selectAll("path")
+        //     .enter()
+        //     .data(series)
+        //     .join("path")
+        //     .attr("fill", d=>colorScale(d.key))
+        //     .attr("d", area2)  
+        //     .attr("clip-path", "url(#clip)")
+        //     .on("mouseover", (event, d, i) => tooltip.text(d.key))
+        //     .on("mouseout", (event, d, i) => tooltip.text(""))
+        //     .on("click", (event, d) => {
+        //             console.log("ELSE")
+        //             selected = d.key;
+        //             svg.selectAll('path').remove()
+        //             updateMain(selected, DATA, svg)
+        //             //update(data); // simply update the chart again
+        //     })
+        //     .merge(areas)
+        //     .attr("d", area2)
 
             areas.enter().remove()
         
